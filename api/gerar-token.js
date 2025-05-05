@@ -43,6 +43,9 @@ export default async function handler(req, res) {
       expire_time: response.data.result.expire_time
     });
   } catch (error) {
-    return res.status(500).json({ error: 'Erro ao obter access_token', details: error.response?.data || error.message });
+    return res.status(500).json({
+      error: 'Erro ao obter access_token',
+      details: error.response?.data || error.message
+    });
   }
 }
