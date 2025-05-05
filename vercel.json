@@ -1,0 +1,9 @@
+{
+    "version": 2,
+    "functions": {
+      "api/gerar-sign.js": {
+        "runtime": "edge"
+      }
+    }
+  }
+  
