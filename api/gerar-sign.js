@@ -1,6 +1,6 @@
-import crypto from 'crypto';
+const crypto = require('crypto');
 
-export default function handler(req, res) {
+module.exports = (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
