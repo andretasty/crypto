@@ -5,20 +5,24 @@ export default function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { client_id, access_token, secret, payload } = req.body;
+  const { client_id, access_token, secret, payload, url, method } = req.body;
 
-  if (!client_id || !access_token || !secret || !payload) {
-    return res.status(400).json({ error: 'Parâmetros faltando' });
+  if (!client_id || !access_token || !secret || !payload || !url || !method) {
+    return res.status(400).json({ error: 'Faltando dados: client_id, access_token, secret, payload, url, method' });
   }
 
-  const t = Date.now().toString();
-  const signStr = client_id + access_token + t + JSON.stringify(payload);
+  const timestamp = Date.now().toString();
+  const bodyStr = JSON.stringify(payload);
 
-  const sign = crypto
-    .createHmac('sha256', secret)
-    .update(signStr)
-    .digest('hex')
-    .toUpperCase();
+  // Hash do corpo
+  const bodyHash = crypto.createHash('sha256').update(bodyStr).digest('hex');
 
-  return res.status(200).json({ sign, t });
+  // Monta o stringToSign
+  const stringToSign = `${method}\n${bodyHash}\n\n${url}`;
+
+  // Concatena para gerar o sign
+  const signRaw = client_id + access_token + timestamp + stringToSign;
+  const sign = crypto.createHmac('sha256', secret).update(signRaw).digest('hex').toUpperCase();
+
+  return res.status(200).json({ sign, t: timestamp });
 }
